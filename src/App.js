@@ -1,23 +1,32 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import EventCard from './components/EventCard';
+import EventModal from './components/EventModal';
+import SearchBar from './components/SearchBar';
+import eventsData from './data/eventsData';
 import './App.css';
 
 function App() {
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredEvents = eventsData.filter(
+    (event) =>
+      event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.location.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>EventSpot Lite</h1>
+      <SearchBar value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+
+      <div className="grid-container">
+        {filteredEvents.map((event) => (
+          <EventCard key={event.id} event={event} onClick={() => setSelectedEvent(event)} />
+        ))}
+      </div>
+
+      {selectedEvent && <EventModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />}
     </div>
   );
 }
